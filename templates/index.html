@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Hugging Face App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Text Generation with Hugging Face Model</h1>
+        <form id="generation-form">
+            <label for="prompt">Enter your prompt:</label>
+            <textarea id="prompt" name="prompt" rows="4" cols="50"></textarea>
+            <button type="submit">Generate</button>
+        </form>
+        <div id="result">
+            <h2>Generated Text:</h2>
+            <p id="generated-text"></p>
+        </div>
+    </div>
+    <script>
+        document.getElementById('generation-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            });
+            const data = await response.json();
+            document.getElementById('generated-text').innerText = data.generated_text;
+        });
+    </script>
+</body>
+</html>
