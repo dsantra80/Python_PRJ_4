@@ -37,6 +37,9 @@ COPY . .
 # Set the PYTHONPATH
 ENV PYTHONPATH=/app
 
+# Set the Hugging Face token
+ENV HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
+
 # Copy test files
 COPY tests ./tests
 
