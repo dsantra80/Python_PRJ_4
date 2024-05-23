@@ -34,7 +34,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container
 COPY . .
 
+# Set the PYTHONPATH
+ENV PYTHONPATH=/app
+
+# Copy test files
+COPY tests ./tests
+
 # Command to run tests
 CMD ["pytest"]
-
-CMD ["python", "app.py"]
