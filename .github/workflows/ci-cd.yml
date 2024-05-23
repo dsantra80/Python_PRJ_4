@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -41,12 +40,12 @@ jobs:
     - name: Run tests
       run: docker run -e HUGGINGFACE_TOKEN=${{ secrets.HUGGINGFACE_TOKEN }} flask_huggingface_app:latest pytest
 
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
     - name: Push to Docker Hub
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
         tags: your-dockerhub-username/flask_huggingface_app:latest
-      env:
-        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-        DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
