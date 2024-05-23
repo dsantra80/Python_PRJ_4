@@ -1,0 +1,51 @@
+version: 2.1
+
+executors:
+  python-executor:
+    docker:
+      - image: circleci/python:3.9
+    working_directory: ~/repo
+
+jobs:
+  build:
+    executor: python-executor
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+      - run:
+          name: Lint with flake8
+          command: |
+            pip install flake8
+            flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+            flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - setup_remote_docker:
+          version: 20.10.7
+
+      - run:
+          name: Build Docker image
+          command: docker build -t your-dockerhub-username/flask_huggingface_app:latest .
+
+      - run:
+          name: Run tests
+          command: docker run -e HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN} your-dockerhub-username/flask_huggingface_app:latest pytest
+
+      - run:
+          name: Log in to Docker Hub
+          command: echo $DOCKER_HUB_ACCESS_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+
+      - run:
+          name: Push to Docker Hub
+          command: docker push your-dockerhub-username/flask_huggingface_app:latest
+
+workflows:
+  version: 2
+  build_and_push:
+    jobs:
+      - build
