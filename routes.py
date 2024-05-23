@@ -5,7 +5,9 @@ import os
 main = Blueprint('main', __name__)
 
 # Load the Hugging Face model
-model_name = "Llama-3-8B-Instruct-Gradient-1048k"
+#model_name = "Llama-3-8B-Instruct-Gradient-1048k"
+model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
+meta-llama/Meta-Llama-3-8B-Instruct
 token = os.getenv("HUGGINGFACE_TOKEN")
 model = pipeline('text-generation', model=model_name, use_auth_token=token)
 
