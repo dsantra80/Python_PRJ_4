@@ -15,10 +15,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: 3.9
 
@@ -39,7 +39,7 @@ jobs:
       run: docker build . --file Dockerfile --tag flask_huggingface_app:latest
 
     - name: Run tests
-      run: docker run flask_huggingface_app:latest pytest
+      run: docker run -e HUGGINGFACE_TOKEN=${{ secrets.HUGGINGFACE_TOKEN }} flask_huggingface_app:latest pytest
 
     - name: Push to Docker Hub
       uses: docker/build-push-action@v2
