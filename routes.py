@@ -1,14 +1,17 @@
 from flask import Blueprint, render_template, request, jsonify
-from transformers import pipeline
+import requests
 import os
 
 main = Blueprint('main', __name__)
 
-# Load the Hugging Face model
-#model_name = "Llama-3-8B-Instruct-Gradient-1048k"
-model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
+# Hugging Face API configuration
+API_URL = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
 token = os.getenv("HUGGINGFACE_TOKEN")
-model = pipeline('text-generation', model=model_name, use_auth_token=token)
+headers = {"Authorization": f"Bearer {token}"}
+
+def query(payload):
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.json()
 
 @main.route('/')
 def index():
@@ -17,6 +20,6 @@ def index():
 @main.route('/generate', methods=['POST'])
 def generate():
     prompt = request.form['prompt']
-    response = model(prompt, max_length=50, num_return_sequences=1)
-    generated_text = response[0]['generated_text']
+    output = query({"inputs": prompt})
+    generated_text = output[0]['generated_text']
     return jsonify({'generated_text': generated_text})
